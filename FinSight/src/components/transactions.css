@@ -1,0 +1,221 @@
+.transactions-page {
+  min-height: 100vh;
+  background: #93c47d;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 36px 24px 48px;
+  box-sizing: border-box;
+}
+
+.transactions-shell {
+  width: min(1126px, 100%);
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 34px 64px rgba(20, 63, 21, 0.14);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.transactions-header {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) 220px;
+  gap: 22px;
+  align-items: center;
+}
+
+.profile-button {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  border: 1px solid rgba(37, 62, 23, 0.12);
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.85);
+}
+
+.profile-button::before {
+  content: '';
+  display: block;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  margin: 26px auto;
+  background: linear-gradient(180deg, #8fbf6f 0%, #598a40 100%);
+}
+
+.navbar-skeleton {
+  min-height: 84px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+}
+
+.calendar-panel {
+  min-height: 84px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  display: grid;
+  place-items: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: #36491f;
+}
+
+.transactions-toolbar {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr) auto;
+  gap: 18px;
+  align-items: center;
+}
+
+.pager {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 700;
+  color: #24331b;
+}
+
+.pager button {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  border: none;
+  background: rgba(255, 255, 255, 0.9);
+  color: #24331b;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.pager button:hover {
+  transform: translateY(-1px);
+}
+
+.select-control,
+.search-control,
+.filters-button {
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.95);
+  color: #23331c;
+  font-size: 15px;
+}
+
+.select-control {
+  min-width: 130px;
+  padding: 12px 16px;
+}
+
+.search-control {
+  display: flex;
+  gap: 12px;
+  padding: 10px;
+}
+
+.search-control input,
+.search-control select {
+  border: none;
+  background: transparent;
+  color: #23331c;
+  font-size: 15px;
+  outline: none;
+}
+
+.search-control input {
+  flex: 1;
+}
+
+.search-control select {
+  min-width: 160px;
+}
+
+.filters-button {
+  padding: 12px 20px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.transactions-table {
+  display: grid;
+  gap: 14px;
+}
+
+.transactions-row {
+  display: grid;
+  grid-template-columns: 1.2fr 1.6fr 1fr 1fr 1fr;
+  align-items: center;
+  padding: 18px 20px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+}
+
+.transactions-row.header {
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #5d6b44;
+  background: rgba(255, 255, 255, 0.96);
+}
+
+.transactions-row.item:nth-child(odd) {
+  background: rgba(255, 255, 255, 0.84);
+}
+
+.transactions-row.item .value {
+  color: #24331b;
+  font-weight: 500;
+}
+
+.transactions-row.item .amount {
+  font-weight: 700;
+}
+
+.transactions-row.item .amount.negative {
+  color: #8e302b;
+}
+
+@media (max-width: 960px) {
+  .transactions-shell {
+    padding: 24px;
+  }
+
+  .transactions-header {
+    grid-template-columns: 1fr;
+  }
+
+  .calendar-panel {
+    min-height: 72px;
+  }
+
+  .transactions-toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .search-control {
+    width: 100%;
+  }
+
+  .transactions-row {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(5, auto);
+    gap: 16px;
+  }
+
+  .transactions-row.header {
+    display: none;
+  }
+
+  .transactions-row.item {
+    padding: 18px;
+  }
+
+  .transactions-row.item > div {
+    display: flex;
+    justify-content: space-between;
+  }
+}
