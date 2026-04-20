@@ -8,13 +8,13 @@ const transactions = [
   { date: '2026-03-30', description: 'Utilities', category: 'Bills', type: 'Expense', amount: '-$210.45' },
 ]
 
-function Transactions() {
+function Transactions({ currentPage, onNavigate }) {
   return (
     <main className="transactions-page">
       <section className="transactions-shell">
         <div className="transactions-header">
           <button className="profile-button" aria-label="Open profile" />
-          <div className="navbar-skeleton" />
+          <div className="transactions-nav" aria-label="Transactions page navigation" />
           <div className="calendar-panel">Calendar</div>
         </div>
 
