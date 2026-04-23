@@ -197,7 +197,7 @@ html, body {
 /* ─── TOOLBAR ─────────────────────────────────────────────── */
 .transactions-toolbar {
   display: grid;
-  grid-template-columns: auto auto minmax(0, 1fr) auto;
+  grid-template-columns: auto auto minmax(0, 1fr);
   gap: clamp(10px, 1.5vw, 16px);
   align-items: center;
 }

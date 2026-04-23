@@ -182,7 +182,7 @@ export default function Transactions() {
               </select>
             </div>
 
-            <button className="filters-button" type="button">⚡ Filters</button>
+
           </div>
 
           <div className="transactions-table">
