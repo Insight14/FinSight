@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react'
 import './transactions.css'
 
-const ALL_TRANSACTIONS = [
+const DEFAULT_TRANSACTIONS = [
   // April 2026 - week of Apr 17
   { date: '2026-04-21', description: 'Grocery Store', category: 'Bills', type: 'Expense', amount: '-$98.32' },
   { date: '2026-04-20', description: 'Gas Station', category: 'Transport', type: 'Expense', amount: '-$55.00' },
@@ -92,16 +92,92 @@ function parseAmount(str) {
   return isNaN(n) ? 0 : n
 }
 
+function formatCurrency(value, type) {
+  const amount = Math.abs(Number(value) || 0)
+  const formatted = amount.toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })
+  return `${type === 'Income' ? '+' : '-'}$${formatted}`
+}
+
+function getInitialTransactions() {
+  const saved = localStorage.getItem('finsight_transactions')
+  if (saved) {
+    try {
+      return JSON.parse(saved)
+    } catch {
+      localStorage.removeItem('finsight_transactions')
+    }
+  }
+
+  return DEFAULT_TRANSACTIONS.map((transaction, index) => ({
+    id: `default-${index}`,
+    ...transaction,
+  }))
+}
+
 export default function Transactions() {
   const [mode, setMode] = useState('Month')
   const [anchor, setAnchor] = useState(new Date('2026-04-01'))
   const [search, setSearch] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('All Categories')
+  const [transactions, setTransactions] = useState(getInitialTransactions)
+  const [newTransaction, setNewTransaction] = useState({
+    date: new Date().toISOString().slice(0, 10),
+    description: '',
+    category: 'Other',
+    type: 'Expense',
+    amount: '',
+  })
 
   const periodLabel = formatPeriodLabel(mode, anchor)
 
+  const handleNewTransactionChange = (field, value) => {
+    const next = { ...newTransaction, [field]: value }
+
+    if (field === 'type') {
+      next.category = value === 'Income' ? 'Income' : 'Other'
+    }
+
+    setNewTransaction(next)
+  }
+
+  const handleAddTransaction = (event) => {
+    event.preventDefault()
+
+    const amountNumber = Number(newTransaction.amount)
+    if (!newTransaction.date || !newTransaction.description.trim() || !amountNumber || amountNumber <= 0) {
+      return
+    }
+
+    const transaction = {
+      id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
+      date: newTransaction.date,
+      description: newTransaction.description.trim(),
+      category: newTransaction.type === 'Income' ? 'Income' : newTransaction.category,
+      type: newTransaction.type,
+      amount: formatCurrency(amountNumber, newTransaction.type),
+    }
+
+    setTransactions(prev => {
+      const updated = [transaction, ...prev]
+      localStorage.setItem('finsight_transactions', JSON.stringify(updated))
+      return updated
+    })
+
+    setAnchor(new Date(`${transaction.date}T00:00:00`))
+    setNewTransaction({
+      date: transaction.date,
+      description: '',
+      category: 'Other',
+      type: 'Expense',
+      amount: '',
+    })
+  }
+
   const filtered = useMemo(() => {
-    let txns = filterByPeriod(ALL_TRANSACTIONS, mode, anchor)
+    let txns = filterByPeriod(transactions, mode, anchor)
     if (categoryFilter !== 'All Categories') txns = txns.filter(t => t.category === categoryFilter)
     if (search.trim()) {
       const q = search.toLowerCase()
@@ -112,7 +188,7 @@ export default function Transactions() {
       )
     }
     return txns
-  }, [mode, anchor, search, categoryFilter])
+  }, [transactions, mode, anchor, search, categoryFilter])
 
   const totalIncome   = filtered.filter(t => !t.amount.startsWith('-')).reduce((s, t) => s + parseAmount(t.amount), 0)
   const totalExpenses = filtered.filter(t =>  t.amount.startsWith('-')).reduce((s, t) => s + parseAmount(t.amount), 0)
@@ -131,7 +207,7 @@ export default function Transactions() {
           <div className="nav-profile">
             <div className="nav-profile-avatar">B</div>
             <div className="nav-profile-info">
-              <span className="nav-profile-name">Blaaaaaa</span>
+              <span className="nav-profile-name">John Doe</span>
               <span className="nav-profile-role">Premium User</span>
             </div>
           </div>
@@ -185,6 +261,72 @@ export default function Transactions() {
 
           </div>
 
+          <form className="add-transaction-card" onSubmit={handleAddTransaction}>
+            <h2>Add Transaction</h2>
+            <div className="add-transaction-grid">
+              <label>
+                Date
+                <input
+                  type="date"
+                  value={newTransaction.date}
+                  onChange={e => handleNewTransactionChange('date', e.target.value)}
+                  required
+                />
+              </label>
+
+              <label>
+                Description
+                <input
+                  type="text"
+                  placeholder="Example: Grocery Store"
+                  value={newTransaction.description}
+                  onChange={e => handleNewTransactionChange('description', e.target.value)}
+                  required
+                />
+              </label>
+
+              <label>
+                Type
+                <select
+                  value={newTransaction.type}
+                  onChange={e => handleNewTransactionChange('type', e.target.value)}
+                >
+                  <option>Expense</option>
+                  <option>Income</option>
+                </select>
+              </label>
+
+              <label>
+                Category
+                <select
+                  value={newTransaction.category}
+                  onChange={e => handleNewTransactionChange('category', e.target.value)}
+                  disabled={newTransaction.type === 'Income'}
+                >
+                  <option>Transport</option>
+                  <option>Bills</option>
+                  <option>Other</option>
+                  <option>Income</option>
+                </select>
+              </label>
+
+              <label>
+                Amount
+                <input
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  placeholder="0.00"
+                  value={newTransaction.amount}
+                  onChange={e => handleNewTransactionChange('amount', e.target.value)}
+                  required
+                />
+              </label>
+
+              <button className="add-transaction-btn" type="submit">+ Add</button>
+            </div>
+          </form>
+
           <div className="transactions-table">
             <div className="transactions-row header">
               <div>Date</div>
@@ -198,7 +340,7 @@ export default function Transactions() {
               <div className="transactions-empty">No transactions found for this period.</div>
             ) : (
               filtered.map((t, i) => (
-                <div className="transactions-row item" key={i}>
+                <div className="transactions-row item" key={t.id || i}>
                   <div className="value date-val" data-label="Date">{t.date}</div>
                   <div className="value desc-val" data-label="Description">{t.description}</div>
                   <div className="value" data-label="Category">
