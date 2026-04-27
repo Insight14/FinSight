@@ -1,12 +1,7 @@
-import './App.css'
-import Transactions from './components/transactions.jsx'
+import UserPage from './components/UserPage.jsx'
 
 function App() {
-  return (
-    <div className="app-container">
-      <Transactions currentPage="transactions" onNavigate={() => {}} />
-    </div>
-  )
+  return <UserPage />
 }
 
 export default App

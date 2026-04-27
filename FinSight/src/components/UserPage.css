@@ -1,0 +1,336 @@
+:root {
+  /* LIGHT MODE (Image b1e581 inspired) */
+  --bg-main: #93f5b7; 
+  --card-hero: #c1ffd7;
+  --input-hero: #ffffff;
+  --text-primary: #04120a; /* Very dark green for contrast */
+  --text-secondary: #166534;
+  --border-hero: #76c893;
+  --toast-bg: #1a1a1a;
+  --toast-text: #ffffff;
+  --btn-mini-bg: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  line-height: 1.5;
+}
+
+/* Better Buttons */
+.up-btn-mini, .up-btn-rect {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: var(--input-hero);
+  color: #000; /* Inputs and buttons in your image use dark text on light grey/white */
+}
+
+.up-btn-mini:hover, .up-btn-rect:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  filter: brightness(0.95);
+}
+
+.up-btn-mini:active {
+  transform: translateY(0);
+}
+
+/* Toggle Switch Improvements */
+.up-switch {
+  width: 48px;
+  height: 24px;
+  background: #1a1a1a; /* Darker track like your image */
+  border-radius: 24px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.up-switch.on {
+  background: #000; /* Solid black when on */
+}
+
+.up-switch-handle {
+  width: 18px;
+  height: 18px;
+  background: #ffffff;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 3px;
+  transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.up-switch.on .up-switch-handle {
+  transform: translateX(22px);
+}
+[data-theme='dark'] {
+  /* DARK MODE (Image b1e563 inspired) */
+  --bg-main: #0d0d0d;
+  --card-hero: #1e3d2b;
+  --input-hero: #949191; /* Grey from your image */
+  --text-primary: #f0fdf4; /* Off-white for comfort */
+  --text-secondary: #86efac;
+  --border-hero: #2d6a4f;
+  --toast-bg: #f0fdf4;
+  --toast-text: #0a2e1a;
+  --btn-mini-bg: #949191;
+}
+
+.up-root {
+  background-color: var(--bg-main);
+  min-height: 100vh;
+  padding: 40px 20px;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: var(--text-primary);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.up-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px; 
+  padding: 20px;
+}
+
+/* THE HERO BOX */
+.up-hero-box {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  background-color: var(--card-hero);
+  border: 1px solid var(--border-hero);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.up-hero-left {
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-right: 1px solid rgba(0,0,0,0.1);
+  text-align: center;
+  background: rgba(255,255,255,0.03);
+}
+
+.up-avatar-container {
+  width: 110px;
+  height: 110px;
+  background: #334155;
+  border-radius: 35px; /* Squircle */
+  position: relative;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: transform 0.2s;
+}
+
+.up-avatar-container:hover { transform: scale(1.05); }
+
+.up-avatar-img { width: 100%; height: 100%; border-radius: 35px; object-fit: cover; }
+.up-avatar-init { font-size: 2rem; font-weight: 800; line-height: 110px; color: white; }
+
+.up-cam-icon {
+  position: absolute;
+  bottom: -5px;
+  right: -5px;
+  background: var(--text-primary);
+  color: var(--card-hero);
+  border-radius: 10px;
+  padding: 5px;
+  font-size: 14px;
+}
+
+.up-hero-right {
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+}
+
+.up-hero-field { display: flex; flex-direction: column; gap: 8px; }
+.up-hero-field label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); }
+.up-hero-field input {
+  background-color: var(--input-hero);
+  border: 2px solid transparent;
+  padding: 12px 16px;
+  border-radius: 8px;
+  color: #000;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: border-color 0.2s;
+}
+
+.up-hero-field input:focus { border-color: var(--text-primary); outline: none; }
+
+.up-settings-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 Equal columns */
+  gap: 20px; /* Equal spacing between cards */
+  align-items: stretch; /* Ensures all cards are the same height */
+}
+
+.up-toggle-row, .up-sec-row {
+  display: flex;
+  justify-content: space-between; /* Pushes label to left, control to right */
+  align-items: center;
+  width: 100%;
+  min-height: 40px;
+}
+
+.up-sub-card {
+  background-color: var(--card-hero);
+  padding: 24px;
+  border: 1px solid var(--border-hero);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px; /* Spacing between items inside the card */
+}
+
+.up-sub-card h3 { margin-bottom: 20px; font-size: 1.1rem; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 10px; }
+
+/* THE TOAST POPUP (FLUID) */
+.up-toast-container {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.up-toast {
+  background: var(--toast-bg);
+  color: var(--toast-text);
+  padding: 14px 28px;
+  border-radius: 50px;
+  font-weight: 600;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+  animation: toastPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes toastPop {
+  0% { transform: translateY(100px) scale(0.8); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* BUTTONS & CONTROLS */
+.up-theme-switcher button {
+  flex: 1;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+}
+
+.up-theme-switcher button {
+  flex: 1;
+  border: none;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  background: transparent;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.up-theme-switcher button.active { background: var(--text-primary); color: var(--card-hero); }
+
+.up-btn-mini {
+  background: var(--btn-mini-bg);
+  border: 1px solid rgba(0,0,0,0.1);
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.up-footer-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 32px;
+  background-color: var(--card-hero);
+  border-radius: 12px;
+  border: 1px solid var(--border-hero);
+}
+.up-styled-select {
+  /* Layout & Sizing */
+  width: 100%;
+  padding: 10px 40px 10px 16px; /* Extra right padding for the custom arrow */
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+
+  /* The "Look" */
+  background-color: var(--input-hero); /* Uses the grey from your dark mode or white from light mode */
+  color: #000; /* Dark text for visibility on light/grey backgrounds */
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px; /* Slightly rounded, matching your cards */
+
+  /* Remove default browser arrow */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  /* Add custom arrow using an SVG data URI */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23000000'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+
+  transition: all 0.2s ease;
+}
+
+/* Hover & Focus States */
+.up-styled-select:hover {
+  border-color: var(--text-primary);
+}
+
+.up-styled-select:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+}
+.up-footer-left {
+  display: flex;
+  gap: 12px; /* Spacing between Export and Reset buttons */
+  align-items: center;
+}
+
+.up-footer-right {
+  display: flex;
+  gap: 24px; /* Spacing between Help and Sign Out */
+  align-items: center;
+}
+
+.up-text-link { background: none; border: none; font-weight: 700; cursor: pointer; color: var(--text-primary); margin-left: 20px; }
+.up-text-link.red { color: #ef4444; }
