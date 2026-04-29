@@ -1,162 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap');
 
-*, *::before, *::after {
-  box-sizing: border-box;
-}
-
-html, body {
-  background: #1c1c14;
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  font-family: 'DM Sans', sans-serif;
-  color: #d4d0c4;
-}
-
-/* ─── TOP NAVBAR ─────────────────────────────────────────── */
-.finsight-navbar {
-  width: 100%;
-  background: #1c1c14;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  padding: 0 clamp(16px, 3vw, 40px);
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.finsight-logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  text-decoration: none;
-}
-
-.finsight-logo-icon {
-  width: 34px;
-  height: 34px;
-  background: linear-gradient(135deg, #6a9a4a, #4a7a2a);
-  border-radius: 8px;
-  display: grid;
-  place-items: center;
-  font-size: 16px;
-  font-weight: 800;
-  color: #e8f0e0;
-  font-family: 'Syne', sans-serif;
-  box-shadow: 0 2px 8px rgba(90, 150, 60, 0.3);
-}
-
-.finsight-logo-text {
-  font-family: 'Syne', sans-serif;
-  font-size: 18px;
-  font-weight: 700;
-  color: #e8e4d8;
-  letter-spacing: -0.01em;
-}
-
-.finsight-logo-text span {
-  color: #7ab05a;
-}
-
-.finsight-nav-right {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.nav-icon-btn {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  background: #2a2a1e;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #a0a090;
-  cursor: pointer;
-  display: grid;
-  place-items: center;
-  font-size: 15px;
-  transition: background 0.2s, color 0.2s;
-  position: relative;
-}
-
-.nav-icon-btn:hover {
-  background: #333326;
-  color: #d4d0c4;
-}
-
-.nav-icon-btn .badge {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #7ab05a;
-  border: 1.5px solid #1c1c14;
-}
-
-.nav-profile {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 5px 12px 5px 6px;
-  background: #2a2a1e;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.nav-profile:hover {
-  background: #333326;
-}
-
-.nav-profile-avatar {
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
-  background: linear-gradient(135deg, #6a9a4a, #4a7a2a);
-  display: grid;
-  place-items: center;
-  font-size: 12px;
-  color: #e8f0e0;
-  font-weight: 700;
-  font-family: 'Syne', sans-serif;
-}
-
-.nav-profile-info {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-}
-
-.nav-profile-name {
-  font-size: 13px;
-  font-weight: 600;
-  color: #e8e4d8;
-  line-height: 1;
-  font-family: 'Syne', sans-serif;
-}
-
-.nav-profile-role {
-  font-size: 10px;
-  color: #7ab05a;
-  line-height: 1;
-  font-weight: 500;
-}
-
 /* ─── PAGE LAYOUT ─────────────────────────────────────────── */
 .transactions-page {
-  min-height: calc(100vh - 60px);
+  min-height: 100vh;
   background: #1c1c14;
   display: flex;
   justify-content: center;
   align-items: flex-start;
   padding: clamp(20px, 3vw, 32px) clamp(16px, 3vw, 40px);
   width: 100%;
+  font-family: 'DM Sans', sans-serif;
+  color: #d4d0c4;
 }
 
 .transactions-shell {
@@ -192,6 +46,46 @@ html, body {
   font-size: 13px;
   color: #6a6a58;
   font-weight: 400;
+}
+
+.transactions-title-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.add-toggle-btn {
+  padding: 9px 20px;
+  border-radius: 10px;
+  border: 1px solid rgba(122, 176, 90, 0.25);
+  background: rgba(122, 176, 90, 0.08);
+  color: #7ab05a;
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+}
+
+.add-toggle-btn:hover {
+  background: rgba(122, 176, 90, 0.15);
+  border-color: rgba(122, 176, 90, 0.45);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(122, 176, 90, 0.15);
+}
+
+.add-toggle-btn.active {
+  background: rgba(208, 136, 136, 0.1);
+  border-color: rgba(208, 136, 136, 0.25);
+  color: #d08888;
+}
+
+.add-toggle-btn.active:hover {
+  background: rgba(208, 136, 136, 0.18);
+  border-color: rgba(208, 136, 136, 0.4);
+  box-shadow: 0 4px 16px rgba(208, 136, 136, 0.12);
 }
 
 /* ─── TOOLBAR ─────────────────────────────────────────────── */
@@ -240,8 +134,7 @@ html, body {
 }
 
 .select-control,
-.search-control,
-.filters-button {
+.search-control {
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: #232318;
@@ -252,8 +145,7 @@ html, body {
 }
 
 .select-control:focus,
-.search-control:focus-within,
-.filters-button:focus {
+.search-control:focus-within {
   outline: none;
   border-color: rgba(122, 176, 90, 0.4);
 }
@@ -265,6 +157,7 @@ html, body {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236a6a58'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 10px center;
+  background-size: auto;
   padding-right: 28px;
   cursor: pointer;
 }
@@ -301,13 +194,6 @@ html, body {
   color: #5a5a48;
 }
 
-.search-divider {
-  width: 1px;
-  height: 16px;
-  background: rgba(255, 255, 255, 0.08);
-  flex-shrink: 0;
-}
-
 .search-control select {
   min-width: 110px;
   appearance: none;
@@ -315,24 +201,118 @@ html, body {
   color: #7a7a68;
 }
 
-.filters-button {
-  padding: clamp(8px, 1.2vw, 10px) clamp(14px, 2vw, 20px);
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  color: #9a9a88;
-  font-family: 'Syne', sans-serif;
-  font-size: clamp(12px, 1.5vw, 13px);
-  letter-spacing: 0.02em;
+.search-divider {
+  width: 1px;
+  height: 16px;
+  background: rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
 }
 
-.filters-button:hover {
-  background: #2a2a1e;
-  border-color: rgba(122, 176, 90, 0.3);
+/* ─── ADD TRANSACTION CARD ────────────────────────────────── */
+.add-transaction-card {
+  background: #232318;
+  border: 1px solid rgba(122, 176, 90, 0.15);
+  border-radius: 20px;
+  padding: clamp(20px, 3vw, 28px);
+}
+
+.add-transaction-card h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #e8e4d8;
+  margin: 0 0 18px;
+  letter-spacing: -0.01em;
+}
+
+.add-transaction-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 14px;
+  align-items: end;
+}
+
+.add-transaction-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #5a5a48;
+}
+
+.add-transaction-grid input,
+.add-transaction-grid select {
+  background: #1a1a12;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
   color: #d4d0c4;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+
+.add-transaction-grid input:focus,
+.add-transaction-grid select:focus {
+  border-color: rgba(122, 176, 90, 0.4);
+}
+
+.add-transaction-grid input::placeholder {
+  color: #3a3a2e;
+}
+
+.add-transaction-grid select {
+  appearance: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%235a5a48'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 28px;
+}
+
+.add-transaction-grid select:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Color-code the date input calendar icon */
+.add-transaction-grid input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.6);
+  cursor: pointer;
+}
+
+.add-transaction-btn {
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, #5a8a3a, #4a7a2a);
+  color: #e8f0e0;
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: all 0.2s;
+  box-shadow: 0 4px 14px rgba(90, 138, 58, 0.25);
+  white-space: nowrap;
+  height: fit-content;
+  align-self: end;
+}
+
+.add-transaction-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(90, 138, 58, 0.4);
+  filter: brightness(1.08);
+}
+
+.add-transaction-btn:active {
+  transform: translateY(0);
 }
 
 /* ─── TABLE ───────────────────────────────────────────────── */
@@ -434,6 +414,12 @@ html, body {
   border: 1px solid rgba(150, 150, 140, 0.18);
 }
 
+.category-badge.income-cat {
+  background: rgba(122, 176, 90, 0.12);
+  color: #7ab05a;
+  border: 1px solid rgba(122, 176, 90, 0.2);
+}
+
 .transactions-empty {
   padding: clamp(32px, 5vw, 56px) 20px;
   text-align: center;
@@ -441,12 +427,6 @@ html, body {
   font-size: 14px;
   font-family: 'Syne', sans-serif;
   letter-spacing: 0.03em;
-}
-
-.category-badge.income-cat {
-  background: rgba(122, 176, 90, 0.12);
-  color: #7ab05a;
-  border: 1px solid rgba(122, 176, 90, 0.2);
 }
 
 .type-badge {
@@ -519,13 +499,17 @@ html, body {
 .summary-divider {
   width: 1px;
   height: 20px;
-  background: rgba(255,255,255,0.07);
+  background: rgba(255, 255, 255, 0.07);
 }
 
 /* ─── RESPONSIVE ──────────────────────────────────────────── */
 @media (max-width: 1024px) {
   .transactions-row {
     grid-template-columns: 1fr 1.3fr 0.9fr 0.9fr 0.9fr;
+  }
+
+  .add-transaction-grid {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
@@ -537,7 +521,15 @@ html, body {
 
   .pager { grid-column: 1 / -1; }
   .search-control { grid-column: 1 / -1; }
-  .select-control, .filters-button { width: 100%; }
+  .select-control { width: 100%; }
+
+  .add-transaction-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .add-transaction-btn {
+    grid-column: 1 / -1;
+  }
 
   .transactions-row {
     grid-template-columns: 1fr;
@@ -574,12 +566,9 @@ html, body {
     padding: 16px 12px;
   }
 
-  .finsight-navbar {
-    padding: 0 16px;
+  .add-transaction-grid {
+    grid-template-columns: 1fr;
   }
-
-  .nav-profile-info { display: none; }
-  .finsight-logo-text { display: none; }
 
   .pager span { display: none; }
 
