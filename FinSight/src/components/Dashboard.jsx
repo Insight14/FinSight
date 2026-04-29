@@ -1,102 +1,166 @@
+import { useState } from 'react'
 import './Dashboard.css'
+import Transactions from './transactions.jsx'
+import Analysis from './analysis.jsx'
+import UserPage from './UserPage.jsx'
 
-const trendData = [
-  { label: 'Mar 1', income: 3200, expenses: 2100 },
-  { label: 'Mar 8', income: 3500, expenses: 2300 },
-  { label: 'Mar 15', income: 3100, expenses: 2600 },
-  { label: 'Mar 22', income: 3800, expenses: 2400 },
-  { label: 'Mar 29', income: 4200, expenses: 2800 },
-  { label: 'Apr 5', income: 3900, expenses: 2500 },
+const NAV_ITEMS = [
+  { id: 'dashboard', label: 'Dashboard', icon: '⬡', desc: 'Home' },
+  { id: 'analysis',  label: 'Analysis',  icon: '◈', desc: 'Budget & Analytics' },
+  { id: 'transactions', label: 'Transactions', icon: '◎', desc: 'Transaction History' },
+  { id: 'profile',   label: 'Profile',   icon: '◉', desc: 'Account Settings' },
 ]
 
-const categoryData = [
-  { category: 'Shopping', amount: 1240 },
-  { category: 'Food', amount: 890 },
-  { category: 'Transport', amount: 560 },
-  { category: 'Entertainment', amount: 430 },
-  { category: 'Bills', amount: 1120 },
+const CARDS = [
+  {
+    id: 'analysis',
+    title: 'Budget Analysis',
+    subtitle: 'Spending breakdowns, charts & monthly overview',
+    icon: '◈',
+    stat: '$3,400',
+    statLabel: 'This month',
+    accent: '#7ab05a',
+    bg: 'linear-gradient(135deg, #1a2e14 0%, #0f1a0b 100%)',
+    border: 'rgba(122,176,90,0.25)',
+  },
+  {
+    id: 'transactions',
+    title: 'Transactions',
+    subtitle: 'Full history with search, filter & period navigation',
+    icon: '◎',
+    stat: '27',
+    statLabel: 'Records',
+    accent: '#7ab0e0',
+    bg: 'linear-gradient(135deg, #12233a 0%, #0b1520 100%)',
+    border: 'rgba(122,176,224,0.25)',
+  },
+  {
+    id: 'profile',
+    title: 'Profile & Settings',
+    subtitle: 'Notifications, security & account preferences',
+    icon: '◉',
+    stat: '3',
+    statLabel: 'Sections',
+    accent: '#c4a860',
+    bg: 'linear-gradient(135deg, #2a2010 0%, #181208 100%)',
+    border: 'rgba(196,168,96,0.25)',
+  },
 ]
 
-function MetricCard({ title, value, subtitle }) {
+function SidebarNav({ active, onNavigate, onExit }) {
   return (
-    <article className="db-metric-card">
-      <p className="db-metric-title">{title}</p>
-      <strong className="db-metric-value">{value}</strong>
-      <span className="db-metric-subtitle">{subtitle}</span>
-    </article>
+    <aside className="fs-sidebar">
+      <div className="fs-sidebar-logo">
+        <div className="fs-sidebar-logo-icon">↗</div>
+        <span className="fs-sidebar-logo-text">fin<span>Sight</span></span>
+      </div>
+
+      <nav className="fs-sidebar-nav">
+        {NAV_ITEMS.map(item => (
+          <button
+            key={item.id}
+            className={`fs-nav-item ${active === item.id ? 'active' : ''}`}
+            onClick={() => onNavigate(item.id)}
+          >
+            <span className="fs-nav-icon">{item.icon}</span>
+            <span className="fs-nav-label">{item.label}</span>
+            {active === item.id && <span className="fs-nav-pip" />}
+          </button>
+        ))}
+      </nav>
+
+      <div className="fs-sidebar-footer">
+        <div className="fs-guest-badge">
+          <span className="fs-guest-dot" />
+          Guest Mode
+        </div>
+        <button className="fs-exit-btn" onClick={onExit}>
+          ← Exit
+        </button>
+      </div>
+    </aside>
   )
 }
 
-export default function Dashboard() {
-  const totalIncome = trendData.reduce((sum, item) => sum + item.income, 0)
-  const totalExpenses = trendData.reduce((sum, item) => sum + item.expenses, 0)
-  const netBalance = totalIncome - totalExpenses
-  const savingsRate = ((netBalance / (totalIncome || 1)) * 100).toFixed(1)
+function DashboardHome({ onNavigate }) {
+  return (
+    <div className="fs-home">
+      <header className="fs-home-header">
+        <div>
+          <p className="fs-home-eyebrow">Welcome back</p>
+          <h1 className="fs-home-title">Guest <span>Overview</span></h1>
+        </div>
+        <div className="fs-home-meta">
+          <span className="fs-home-date">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</span>
+        </div>
+      </header>
 
-  const maxCategoryAmount = Math.max(...categoryData.map((item) => item.amount))
+      <div className="fs-home-grid">
+        {CARDS.map(card => (
+          <button
+            key={card.id}
+            className="fs-page-card"
+            style={{ '--card-bg': card.bg, '--card-border': card.border, '--card-accent': card.accent }}
+            onClick={() => onNavigate(card.id)}
+          >
+            <div className="fs-card-top">
+              <span className="fs-card-icon">{card.icon}</span>
+              <div className="fs-card-stat-block">
+                <span className="fs-card-stat" style={{ color: card.accent }}>{card.stat}</span>
+                <span className="fs-card-stat-label">{card.statLabel}</span>
+              </div>
+            </div>
+            <div className="fs-card-body">
+              <h2 className="fs-card-title">{card.title}</h2>
+              <p className="fs-card-sub">{card.subtitle}</p>
+            </div>
+            <div className="fs-card-arrow" style={{ color: card.accent }}>→</div>
+          </button>
+        ))}
+      </div>
+
+      <div className="fs-home-summary">
+        <div className="fs-summary-item">
+          <span className="fs-summary-label">Net Balance</span>
+          <span className="fs-summary-val positive">+$1,991.96</span>
+        </div>
+        <div className="fs-summary-div" />
+        <div className="fs-summary-item">
+          <span className="fs-summary-label">Total Income</span>
+          <span className="fs-summary-val positive">+$7,950.00</span>
+        </div>
+        <div className="fs-summary-div" />
+        <div className="fs-summary-item">
+          <span className="fs-summary-label">Total Expenses</span>
+          <span className="fs-summary-val negative">-$5,958.04</span>
+        </div>
+        <div className="fs-summary-div" />
+        <div className="fs-summary-item">
+          <span className="fs-summary-label">Transactions</span>
+          <span className="fs-summary-val">27</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default function Dashboard({ onExit }) {
+  const [page, setPage] = useState('dashboard')
+
+  const renderPage = () => {
+    switch (page) {
+      case 'analysis':     return <Analysis />
+      case 'transactions': return <Transactions />
+      case 'profile':      return <UserPage />
+      default:             return <DashboardHome onNavigate={setPage} />
+    }
+  }
 
   return (
-    <div className="db-page">
-      <main className="db-content">
-        <section className="db-hero">
-          <p className="db-overline">Financial Overview</p>
-          <h1>Track Your Wealth with Organic Precision</h1>
-        </section>
-
-        <section className="db-metrics-grid">
-          <article className="db-balance-card">
-            <p className="db-metric-title">Net Balance</p>
-            <strong className="db-balance-value">${netBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong>
-            <span className="db-metric-subtitle">Your wealth at a glance</span>
-          </article>
-
-          <MetricCard
-            title="Income"
-            value={`$${totalIncome.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-            subtitle="+12.5% from last period"
-          />
-          <MetricCard
-            title="Expenses"
-            value={`$${totalExpenses.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-            subtitle="+8.3% from last period"
-          />
-          <MetricCard title="Savings Rate" value={`${savingsRate}%`} subtitle="of your income saved" />
-        </section>
-
-        <section className="db-grid-two">
-          <article className="db-card">
-            <h2>Income vs Expenses</h2>
-            <div className="db-list">
-              {trendData.map((item) => (
-                <div key={item.label} className="db-list-row">
-                  <span>{item.label}</span>
-                  <span className="db-income">+${item.income.toLocaleString()}</span>
-                  <span className="db-expense">-${item.expenses.toLocaleString()}</span>
-                </div>
-              ))}
-            </div>
-          </article>
-
-          <article className="db-card">
-            <h2>Spending by Category</h2>
-            <div className="db-category-list">
-              {categoryData.map((item) => {
-                const width = (item.amount / maxCategoryAmount) * 100
-                return (
-                  <div key={item.category} className="db-category-row">
-                    <div className="db-category-head">
-                      <span>{item.category}</span>
-                      <strong>${item.amount.toLocaleString()}</strong>
-                    </div>
-                    <div className="db-progress-track">
-                      <span className="db-progress-fill" style={{ width: `${width}%` }} />
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          </article>
-        </section>
+    <div className="fs-shell">
+      <SidebarNav active={page} onNavigate={setPage} onExit={onExit} />
+      <main className="fs-main">
+        {renderPage()}
       </main>
     </div>
   )

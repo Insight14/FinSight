@@ -1,27 +1,15 @@
 import { useState } from 'react'
-import Dashboard from './components/Dashboard.jsx'
-import Analysis from './components/analysis.jsx'
-import GlobalNav from './components/GlobalNav.jsx'
-import Transactions from './components/transactions.jsx'
 import UserPage from './components/UserPage.jsx'
+import Dashboard from './components/Dashboard.jsx'
 
 function App() {
-  const [activePage, setActivePage] = useState('dashboard')
+  const [guestMode, setGuestMode] = useState(false)
 
-  const renderPage = () => {
-    if (activePage === 'transactions') return <Transactions />
-    if (activePage === 'analysis') return <Analysis />
-    if (activePage === 'profile') return <UserPage />
-
-    return <Dashboard />
+  if (guestMode) {
+    return <Dashboard onExit={() => setGuestMode(false)} />
   }
 
-  return (
-    <>
-      <GlobalNav activePage={activePage} onNavigate={setActivePage} />
-      {renderPage()}
-    </>
-  )
+  return <UserPage onGuestMode={() => setGuestMode(true)} />
 }
 
 export default App

@@ -14,7 +14,7 @@ function Toast({ messages }) {
   );
 }
 
-export default function UserProfile() {
+export default function UserProfile({ onGuestMode }) {
   const [user, setUser] = useState(() => {
     const saved = localStorage.getItem('up_user_data');
     return saved ? JSON.parse(saved) : { name: 'First Last', email: 'first.last@gmail.com', phone: '' };
@@ -69,8 +69,25 @@ export default function UserProfile() {
   return (
     <div className="up-root">
       <Toast messages={toasts} />
-      
+
       <div className="up-container">
+
+        {/* Guest Mode Banner — only shown when onGuestMode prop is provided (i.e. top-level login screen) */}
+        {onGuestMode && (
+          <div className="up-guest-banner">
+            <div className="up-guest-banner-left">
+              <span className="up-guest-icon">◎</span>
+              <div>
+                <p className="up-guest-title">Just exploring?</p>
+                <p className="up-guest-sub">Jump straight into the dashboard without signing in.</p>
+              </div>
+            </div>
+            <button className="up-guest-btn" onClick={onGuestMode}>
+              Continue as Guest →
+            </button>
+          </div>
+        )}
+
         {/* Profile Hero */}
         <div className="up-hero-box">
           <div className="up-hero-left">
@@ -87,11 +104,11 @@ export default function UserProfile() {
             {['name', 'email', 'phone'].map((field) => (
               <div className="up-hero-field" key={field}>
                 <label>{field === 'name' ? 'Full Name' : field.charAt(0).toUpperCase() + field.slice(1)}</label>
-                <input 
-                  type={field === 'email' ? 'email' : 'text'} 
-                  value={user[field]} 
+                <input
+                  type={field === 'email' ? 'email' : 'text'}
+                  value={user[field]}
                   placeholder={`Enter your ${field}`}
-                  onChange={(e) => handleInputChange(field, e.target.value)} 
+                  onChange={(e) => handleInputChange(field, e.target.value)}
                 />
               </div>
             ))}
@@ -146,8 +163,8 @@ export default function UserProfile() {
             <button className="up-btn-rect outline" onClick={() => { localStorage.clear(); window.location.reload(); }}><span>🔄</span> Reset</button>
           </div>
           <div className="up-footer-right">
-             <button className="up-text-link" onClick={() => showToast('Redirecting to Support')}>Help Center</button>
-             <button className="up-text-link red" onClick={() => showToast('Signing out...')}>Sign out</button>
+            <button className="up-text-link" onClick={() => showToast('Redirecting to Support')}>Help Center</button>
+            <button className="up-text-link red" onClick={() => showToast('Signing out...')}>Sign out</button>
           </div>
         </div>
       </div>
