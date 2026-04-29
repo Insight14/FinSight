@@ -170,6 +170,14 @@ export default function Transactions() {
     setShowForm(false)
   }
 
+  const handleRemove = (id) => {
+    setTransactions(prev => {
+      const updated = prev.filter(t => t.id !== id)
+      localStorage.setItem('finsight_transactions', JSON.stringify(updated))
+      return updated
+    })
+  }
+
   const filtered = useMemo(() => {
     let txns = filterByPeriod(transactions, mode, anchor)
     if (categoryFilter !== 'All Categories') txns = txns.filter(t => t.category === categoryFilter)
@@ -200,7 +208,7 @@ export default function Transactions() {
               className={`add-toggle-btn ${showForm ? 'active' : ''}`}
               onClick={() => setShowForm(prev => !prev)}
             >
-              {showForm ? '✕ Close' : '+ Add Transaction'}
+              {showForm ? '✕ Close' : '+ Add / Remove Transaction'}
             </button>
           </div>
         </div>
@@ -317,13 +325,14 @@ export default function Transactions() {
             <div>Category</div>
             <div>Type</div>
             <div>Amount</div>
+            {showForm && <div></div>}
           </div>
 
           {filtered.length === 0 ? (
             <div className="transactions-empty">No transactions found for this period.</div>
           ) : (
             filtered.map((t, i) => (
-              <div className="transactions-row item" key={t.id || i}>
+              <div className={`transactions-row item ${showForm ? 'has-remove' : ''}`} key={t.id || i}>
                 <div className="value date-val" data-label="Date">{t.date}</div>
                 <div className="value desc-val" data-label="Description">{t.description}</div>
                 <div className="value" data-label="Category">
@@ -335,6 +344,18 @@ export default function Transactions() {
                 <div className={`value amount ${t.amount.startsWith('-') ? 'negative' : 'positive'}`} data-label="Amount">
                   {t.amount}
                 </div>
+                {showForm && (
+                  <div className="value remove-cell" data-label="">
+                    <button
+                      className="remove-btn"
+                      onClick={() => handleRemove(t.id)}
+                      aria-label={`Remove ${t.description}`}
+                      title="Remove transaction"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                )}
               </div>
             ))
           )}

@@ -337,6 +337,47 @@
   transition: background 0.15s;
 }
 
+.transactions-row.has-remove {
+  grid-template-columns: 1fr 2fr 1.2fr 1.2fr 1.2fr 48px;
+}
+
+.remove-cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.remove-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: #2a2a1e;
+  color: #5a5a48;
+  font-size: 11px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+.remove-btn:hover {
+  background: rgba(220, 90, 90, 0.12);
+  border-color: rgba(220, 90, 90, 0.35);
+  color: #e86060;
+  box-shadow: 0 0 12px rgba(220, 90, 90, 0.1);
+}
+
+.remove-btn:active {
+  background: rgba(220, 90, 90, 0.22);
+  transform: scale(0.92);
+  box-shadow: none;
+}
+
 .transactions-row.header {
   font-size: clamp(10px, 1.3vw, 12px);
   letter-spacing: 0.1em;
@@ -508,6 +549,10 @@
     grid-template-columns: 1fr 1.3fr 0.9fr 0.9fr 0.9fr;
   }
 
+  .transactions-row.has-remove {
+    grid-template-columns: 1fr 1.3fr 0.9fr 0.9fr 0.9fr 44px;
+  }
+
   .add-transaction-grid {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -535,6 +580,14 @@
     grid-template-columns: 1fr;
     gap: 10px;
     padding: 14px;
+  }
+
+  .transactions-row.has-remove {
+    grid-template-columns: 1fr;
+  }
+
+  .remove-cell {
+    justify-content: flex-end;
   }
 
   .transactions-row.header { display: none; }
