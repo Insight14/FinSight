@@ -119,27 +119,8 @@ export default function Transactions() {
   const net = totalIncome - totalExpenses
 
   return (
-    <>
-      <nav className="finsight-navbar">
-        <a className="finsight-logo" href="#">
-          <div className="finsight-logo-icon">↗</div>
-          <span className="finsight-logo-text">fin<span>Sight</span></span>
-        </a>
-        <div className="finsight-nav-right">
-          <button className="nav-icon-btn" aria-label="Notifications">🔔<span className="badge" /></button>
-          <button className="nav-icon-btn" aria-label="Settings">⚙️</button>
-          <div className="nav-profile">
-            <div className="nav-profile-avatar">B</div>
-            <div className="nav-profile-info">
-              <span className="nav-profile-name">Blaaaaaa</span>
-              <span className="nav-profile-role">Premium User</span>
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      <main className="transactions-page">
-        <section className="transactions-shell">
+    <main className="transactions-page">
+      <section className="transactions-shell">
 
           <div className="transactions-title-row">
             <h1 className="transactions-title">Transaction <span>History</span></h1>
@@ -239,8 +220,7 @@ export default function Transactions() {
             </div>
           </div>
 
-        </section>
-      </main>
-    </>
+      </section>
+    </main>
   )
 }
