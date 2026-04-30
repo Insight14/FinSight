@@ -1,0 +1,15 @@
+.page-content {
+  padding: 24px 40px;
+  color: #cbd5e1;
+}
+
+.page-content h2 {
+  font-size: 2rem;
+  color: var(--text-h);
+  margin: 0 0 16px;
+}
+
+.page-content p {
+  font-size: 1rem;
+  line-height: 1.6;
+}
