@@ -1,6 +1,20 @@
 import React, { useMemo, useState } from 'react'
-import { mockTransactions } from './transactions'
 import './analysis.css'
+
+const mockTransactions = [
+  { id: 1, category: 'Food', subcategory: 'Groceries', amount: 95, date: '2024-04-25' },
+  { id: 2, category: 'Food', subcategory: 'Eating Out', amount: 45, date: '2024-04-25' },
+  { id: 3, category: 'Housing', subcategory: 'Rent', amount: 1200, date: '2024-04-20' },
+  { id: 4, category: 'Transportation', subcategory: 'Gas', amount: 65, date: '2024-04-24' },
+  { id: 5, category: 'Food', subcategory: 'Groceries', amount: 72, date: '2024-04-24' },
+  { id: 6, category: 'Housing', subcategory: 'Utilities', amount: 120, date: '2024-04-15' },
+  { id: 7, category: 'Transportation', subcategory: 'Parking', amount: 25, date: '2024-04-23' },
+  { id: 8, category: 'Food', subcategory: 'Dining', amount: 85, date: '2024-04-23' },
+  { id: 9, category: 'Social Life', subcategory: 'Shopping', amount: 150, date: '2024-04-22' },
+  { id: 10, category: 'Entertainment', subcategory: 'Movies', amount: 35, date: '2024-04-21' },
+  { id: 11, category: 'Transportation', subcategory: 'Public Transport', amount: 80, date: '2024-04-20' },
+  { id: 12, category: 'Food', subcategory: 'Groceries', amount: 88, date: '2024-04-19' },
+]
 
 function Analysis() {
   const [activeTab, setActiveTab] = useState('latest')
