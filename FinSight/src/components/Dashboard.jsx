@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import './Dashboard.css'
 import Transactions from './transactions.jsx'
 import Analysis from './analysis.jsx'
@@ -82,7 +82,160 @@ function SidebarNav({ active, onNavigate, onSettings }) {
   )
 }
 
-function DashboardHome({ onNavigate }) {
+function parseAmount(value) {
+  const n = parseFloat(String(value || '').replace(/[^0-9.-]/g, ''))
+  return Number.isFinite(n) ? n : 0
+}
+
+function formatMoney(value) {
+  return Number(value || 0).toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })
+}
+
+const CATEGORY_COLORS = {
+  Shopping: '#8fa884',
+  Food: '#829c79',
+  Transport: '#6f8968',
+  Transportation: '#6f8968',
+  Bills: '#86a07b',
+  Housing: '#8ca381',
+  Entertainment: '#768f6f',
+  'Social Life': '#97ad8a',
+  Other: '#7f9774',
+}
+
+function useAnimatedArray(targetValues, duration = 550) {
+  const [animated, setAnimated] = useState(targetValues)
+  const previousRef = useRef(targetValues)
+
+  useEffect(() => {
+    const startValues = targetValues.map((_, index) => previousRef.current[index] ?? 0)
+    let rafId = 0
+    let startTime = 0
+
+    const tick = (timestamp) => {
+      if (!startTime) startTime = timestamp
+      const progress = Math.min((timestamp - startTime) / duration, 1)
+      const eased = 1 - Math.pow(1 - progress, 3)
+
+      const next = targetValues.map((value, index) => {
+        const start = startValues[index] ?? 0
+        return start + (value - start) * eased
+      })
+
+      setAnimated(next)
+
+      if (progress < 1) {
+        rafId = requestAnimationFrame(tick)
+      } else {
+        previousRef.current = targetValues
+      }
+    }
+
+    rafId = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(rafId)
+  }, [duration, targetValues])
+
+  return animated
+}
+
+function DashboardHome({ onNavigate, transactions = [] }) {
+  const [tooltip, setTooltip] = useState(null)
+
+  const showTooltip = (event, title, value) => {
+    setTooltip({
+      x: event.clientX + 14,
+      y: event.clientY + 14,
+      title,
+      value,
+    })
+  }
+
+  const moveTooltip = (event) => {
+    setTooltip(prev => (prev ? { ...prev, x: event.clientX + 14, y: event.clientY + 14 } : null))
+  }
+
+  const analytics = useMemo(() => {
+    const txs = Array.isArray(transactions) ? transactions : []
+    const income = txs
+      .filter(tx => tx.type === 'Income' || parseAmount(tx.amount) > 0)
+      .reduce((sum, tx) => sum + Math.abs(parseAmount(tx.amount)), 0)
+
+    const expenses = txs
+      .filter(tx => tx.type !== 'Income' && parseAmount(tx.amount) <= 0)
+      .reduce((sum, tx) => sum + Math.abs(parseAmount(tx.amount)), 0)
+
+    const now = new Date()
+    const currentMonth = now.getMonth()
+    const currentYear = now.getFullYear()
+    const weekIncome = [0, 0, 0, 0, 0]
+    const weekExpense = [0, 0, 0, 0, 0]
+    const categoryTotals = {}
+
+    txs.forEach(tx => {
+      const d = new Date(tx.date)
+      const amount = parseAmount(tx.amount)
+      const absAmount = Math.abs(amount)
+      const isIncome = tx.type === 'Income' || amount > 0
+
+      if (d.getFullYear() === currentYear && d.getMonth() === currentMonth) {
+        const weekIdx = Math.min(4, Math.floor((d.getDate() - 1) / 7))
+        if (isIncome) weekIncome[weekIdx] += absAmount
+        else weekExpense[weekIdx] += absAmount
+      }
+
+      if (!isIncome) {
+        const label = tx.category || 'Other'
+        categoryTotals[label] = (categoryTotals[label] || 0) + absAmount
+      }
+    })
+
+    const weekLabels = ['W1', 'W2', 'W3', 'W4', 'W5']
+
+    const topCategories = Object.entries(categoryTotals)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+
+    const categoryMax = Math.max(...topCategories.map(([, value]) => value), 1)
+
+    return {
+      income,
+      expenses,
+      net: income - expenses,
+      count: txs.length,
+      weekLabels,
+      weekIncome,
+      weekExpense,
+      topCategories,
+      categoryMax,
+    }
+  }, [transactions])
+
+  const animatedIncome = useAnimatedArray(analytics.weekIncome)
+  const animatedExpense = useAnimatedArray(analytics.weekExpense)
+  const animatedCategoryValues = useAnimatedArray(analytics.topCategories.map(([, value]) => value))
+
+  const trendMax = Math.max(...animatedIncome, ...animatedExpense, 1)
+
+  const incomePoints = animatedIncome.map((value, i) => ({
+    x: 40 + i * 60,
+    y: 160 - (value / trendMax) * 120,
+    value: analytics.weekIncome[i] || 0,
+    label: analytics.weekLabels[i],
+  }))
+
+  const expensePoints = animatedExpense.map((value, i) => ({
+    x: 40 + i * 60,
+    y: 160 - (value / trendMax) * 120,
+    value: analytics.weekExpense[i] || 0,
+    label: analytics.weekLabels[i],
+  }))
+
+  const incomePolyline = incomePoints.map(p => `${p.x},${p.y}`).join(' ')
+  const expensePolyline = expensePoints.map(p => `${p.x},${p.y}`).join(' ')
+
   return (
     <div className="fs-home">
       <header className="fs-home-header">
@@ -122,24 +275,121 @@ function DashboardHome({ onNavigate }) {
       <div className="fs-home-summary">
         <div className="fs-summary-item">
           <span className="fs-summary-label">Net Balance</span>
-          <span className="fs-summary-val positive">+$1,991.96</span>
+          <span className={`fs-summary-val ${analytics.net >= 0 ? 'positive' : 'negative'}`}>
+            {analytics.net >= 0 ? '+' : '-'}${formatMoney(Math.abs(analytics.net))}
+          </span>
         </div>
         <div className="fs-summary-div" />
         <div className="fs-summary-item">
           <span className="fs-summary-label">Total Income</span>
-          <span className="fs-summary-val positive">+$7,950.00</span>
+          <span className="fs-summary-val positive">+${formatMoney(analytics.income)}</span>
         </div>
         <div className="fs-summary-div" />
         <div className="fs-summary-item">
           <span className="fs-summary-label">Total Expenses</span>
-          <span className="fs-summary-val negative">-$5,958.04</span>
+          <span className="fs-summary-val negative">-${formatMoney(analytics.expenses)}</span>
         </div>
         <div className="fs-summary-div" />
         <div className="fs-summary-item">
           <span className="fs-summary-label">Transactions</span>
-          <span className="fs-summary-val">27</span>
+          <span className="fs-summary-val">{analytics.count}</span>
         </div>
       </div>
+
+      <section className="fs-home-charts" aria-label="Homepage charts">
+        <article className="fs-chart-card" onMouseLeave={() => setTooltip(null)}>
+          <div className="fs-chart-head">
+            <h3>Income vs Expenses Trend</h3>
+          </div>
+          <svg viewBox="0 0 320 190" className="fs-chart-svg" aria-hidden="true">
+            <line x1="40" y1="20" x2="40" y2="160" className="fs-axis" />
+            <line x1="40" y1="160" x2="290" y2="160" className="fs-axis" />
+
+            {[40, 100, 160].map(y => <line key={y} x1="40" y1={y} x2="290" y2={y} className="fs-grid" />)}
+
+            <polyline points={incomePolyline} className="fs-line-income" />
+            <polyline points={expensePolyline} className="fs-line-expense" />
+
+            {incomePoints.map(point => (
+              <g key={`income-${point.label}`}>
+                <circle
+                  cx={point.x}
+                  cy={point.y}
+                  r="5"
+                  className="fs-dot-income"
+                  onMouseEnter={(event) => showTooltip(event, `${point.label} Income`, `$${formatMoney(point.value)}`)}
+                  onMouseMove={moveTooltip}
+                  onMouseLeave={() => setTooltip(null)}
+                />
+                <text x={point.x} y="178" className="fs-axis-label" textAnchor="middle">{point.label}</text>
+              </g>
+            ))}
+
+            {expensePoints.map(point => (
+              <circle
+                key={`expense-${point.label}`}
+                cx={point.x}
+                cy={point.y}
+                r="5"
+                className="fs-dot-expense"
+                onMouseEnter={(event) => showTooltip(event, `${point.label} Expenses`, `$${formatMoney(point.value)}`)}
+                onMouseMove={moveTooltip}
+                onMouseLeave={() => setTooltip(null)}
+              />
+            ))}
+          </svg>
+
+          <div className="fs-chart-legend">
+            <span><i className="income" />Income</span>
+            <span><i className="expense" />Expenses</span>
+          </div>
+        </article>
+
+        <article className="fs-chart-card" onMouseLeave={() => setTooltip(null)}>
+          <div className="fs-chart-head">
+            <h3>Spending by Category</h3>
+          </div>
+          <div className="fs-bar-chart">
+            {analytics.topCategories.length === 0 ? (
+              <div className="fs-chart-empty">No expense data yet.</div>
+            ) : (
+              analytics.topCategories.map(([label, value], index) => {
+                const animatedValue = animatedCategoryValues[index] || 0
+                const barColor = CATEGORY_COLORS[label] || '#87a07b'
+                const barHeight = `${Math.max(10, (animatedValue / analytics.categoryMax) * 100)}%`
+
+                return (
+                <div
+                  key={label}
+                  className="fs-bar-col"
+                  onMouseEnter={(event) => showTooltip(event, label, `$${formatMoney(value)}`)}
+                  onMouseMove={moveTooltip}
+                  onMouseLeave={() => setTooltip(null)}
+                >
+                  <div className="fs-bar-track">
+                    <div
+                      className="fs-bar-fill"
+                      style={{
+                        height: barHeight,
+                        background: `linear-gradient(180deg, ${barColor} 0%, color-mix(in srgb, ${barColor} 65%, #1a1912 35%) 100%)`,
+                      }}
+                    />
+                  </div>
+                  <span className="fs-bar-label">{label}</span>
+                  <span className="fs-bar-value">${formatMoney(value)}</span>
+                </div>
+              )})
+            )}
+          </div>
+        </article>
+      </section>
+
+      {tooltip && (
+        <div className="fs-chart-tooltip" style={{ left: tooltip.x, top: tooltip.y }}>
+          <strong>{tooltip.title}</strong>
+          <span>{tooltip.value}</span>
+        </div>
+      )}
     </div>
   )
 }
@@ -152,7 +402,7 @@ export default function Dashboard({ onSettings, transactions, setTransactions })
       case 'analysis':     return <Analysis onNavigate={setPage} transactions={transactions} />
       case 'transactions': return <Transactions onNavigate={setPage} transactions={transactions} setTransactions={setTransactions} />
       case 'profile':      return <UserPage onBack={() => setPage('dashboard')} />
-      default:             return <DashboardHome onNavigate={setPage} />
+      default:             return <DashboardHome onNavigate={setPage} transactions={transactions} />
     }
   }
 
