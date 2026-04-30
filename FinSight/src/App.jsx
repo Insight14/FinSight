@@ -1,15 +1,25 @@
 import { useState } from 'react'
 import UserPage from './components/UserPage.jsx'
 import Dashboard from './components/Dashboard.jsx'
+import { getInitialTransactions } from './components/transactions.jsx'
 
 function App() {
-  const [guestMode, setGuestMode] = useState(false)
+  const [showUserPage, setShowUserPage] = useState(false)
 
-  if (guestMode) {
-    return <Dashboard onExit={() => setGuestMode(false)} />
+  // central transactions state shared across pages
+  const [transactions, setTransactions] = useState(getInitialTransactions)
+
+  if (showUserPage) {
+    return <UserPage onBack={() => setShowUserPage(false)} />
   }
 
-  return <UserPage onGuestMode={() => setGuestMode(true)} />
+  return (
+    <Dashboard
+      onSettings={() => setShowUserPage(true)}
+      transactions={transactions}
+      setTransactions={setTransactions}
+    />
+  )
 }
 
 export default App

@@ -47,7 +47,7 @@ const CARDS = [
   },
 ]
 
-function SidebarNav({ active, onNavigate, onExit }) {
+function SidebarNav({ active, onNavigate, onSettings }) {
   return (
     <aside className="fs-sidebar">
       <div className="fs-sidebar-logo">
@@ -74,8 +74,8 @@ function SidebarNav({ active, onNavigate, onExit }) {
           <span className="fs-guest-dot" />
           Guest Mode
         </div>
-        <button className="fs-exit-btn" onClick={onExit}>
-          ← Exit
+        <button className="fs-exit-btn" onClick={onSettings}>
+          ⚙ Settings
         </button>
       </div>
     </aside>
@@ -144,21 +144,21 @@ function DashboardHome({ onNavigate }) {
   )
 }
 
-export default function Dashboard({ onExit }) {
+export default function Dashboard({ onSettings, transactions, setTransactions }) {
   const [page, setPage] = useState('dashboard')
 
   const renderPage = () => {
     switch (page) {
-      case 'analysis':     return <Analysis />
-      case 'transactions': return <Transactions />
-      case 'profile':      return <UserPage />
+      case 'analysis':     return <Analysis onNavigate={setPage} transactions={transactions} />
+      case 'transactions': return <Transactions onNavigate={setPage} transactions={transactions} setTransactions={setTransactions} />
+      case 'profile':      return <UserPage onBack={() => setPage('dashboard')} />
       default:             return <DashboardHome onNavigate={setPage} />
     }
   }
 
   return (
     <div className="fs-shell">
-      <SidebarNav active={page} onNavigate={setPage} onExit={onExit} />
+      <SidebarNav active={page} onNavigate={setPage} onSettings={onSettings} />
       <main className="fs-main">
         {renderPage()}
       </main>

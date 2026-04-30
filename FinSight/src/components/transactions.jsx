@@ -3,7 +3,7 @@ import './Transactions.css'
 
 const DEFAULT_TRANSACTIONS = [
   { date: '2026-04-21', description: 'Grocery Store', category: 'Bills', type: 'Expense', amount: '-$98.32' },
-  { date: '2026-04-20', description: 'Gas Station', category: 'Transport', type: 'Expense', amount: '-$55.00' },
+  { date: '2026-04-20', description: 'Gas Station', category: 'Transportation', type: 'Expense', amount: '-$55.00' },
   { date: '2026-04-19', description: 'Netflix', category: 'Bills', type: 'Expense', amount: '-$15.99' },
   { date: '2026-04-18', description: 'Salary', category: 'Income', type: 'Income', amount: '+$2,400.00' },
   { date: '2026-04-17', description: 'Coffee Shop', category: 'Other', type: 'Expense', amount: '-$8.50' },
@@ -11,29 +11,39 @@ const DEFAULT_TRANSACTIONS = [
   { date: '2026-04-13', description: 'Pharmacy', category: 'Other', type: 'Expense', amount: '-$18.75' },
   { date: '2026-04-12', description: 'Electric Bill', category: 'Bills', type: 'Expense', amount: '-$130.00' },
   { date: '2026-04-11', description: 'Freelance Pay', category: 'Income', type: 'Income', amount: '+$350.00' },
-  { date: '2026-04-10', description: 'Uber', category: 'Transport', type: 'Expense', amount: '-$24.50' },
-  { date: '2026-03-30', description: 'Pharmacy', category: 'Transport', type: 'Expense', amount: '-$210.45' },
+  { date: '2026-04-10', description: 'Uber', category: 'Transportation', type: 'Expense', amount: '-$24.50' },
+  { date: '2026-03-30', description: 'Pharmacy', category: 'Transportation', type: 'Expense', amount: '-$210.45' },
   { date: '2026-03-30', description: 'Cafe', category: 'Other', type: 'Expense', amount: '-$15.78' },
   { date: '2026-03-28', description: 'Utilities', category: 'Bills', type: 'Expense', amount: '-$150.68' },
   { date: '2026-03-25', description: 'Salary', category: 'Income', type: 'Income', amount: '+$2,400.00' },
   { date: '2026-03-20', description: 'Pharmacy', category: 'Other', type: 'Expense', amount: '-$300.10' },
   { date: '2026-03-15', description: 'Utilities', category: 'Bills', type: 'Expense', amount: '-$210.45' },
   { date: '2026-03-10', description: 'Bookstore', category: 'Other', type: 'Expense', amount: '-$34.99' },
-  { date: '2026-03-05', description: 'Bus Pass', category: 'Transport', type: 'Expense', amount: '-$60.00' },
   { date: '2026-02-28', description: 'Rent', category: 'Bills', type: 'Expense', amount: '-$1,200.00' },
   { date: '2026-02-25', description: 'Salary', category: 'Income', type: 'Income', amount: '+$2,400.00' },
   { date: '2026-02-14', description: 'Restaurant', category: 'Other', type: 'Expense', amount: '-$88.00' },
-  { date: '2026-02-10', description: 'Gas Station', category: 'Transport', type: 'Expense', amount: '-$52.00' },
+  { date: '2026-03-05', description: 'Bus Pass', category: 'Transportation', type: 'Expense', amount: '-$60.00' },
+  { date: '2026-02-10', description: 'Gas Station', category: 'Transportation', type: 'Expense', amount: '-$52.00' },
   { date: '2026-02-03', description: 'Spotify', category: 'Bills', type: 'Expense', amount: '-$9.99' },
   { date: '2025-12-31', description: 'New Year Party', category: 'Other', type: 'Expense', amount: '-$145.00' },
   { date: '2025-12-25', description: 'Gift Shopping', category: 'Other', type: 'Expense', amount: '-$320.00' },
   { date: '2025-12-01', description: 'Salary', category: 'Income', type: 'Income', amount: '+$2,400.00' },
 ]
 
+// Lightweight mock dataset export for other components (e.g. Analysis)
+export const mockTransactions = DEFAULT_TRANSACTIONS.map((transaction, index) => ({
+  id: `mock-${index}`,
+  ...transaction,
+}))
+
 const categoryClass = {
-  Transport: 'transport',
+  Transportation: 'transport',
   Bills: 'bills',
   Other: 'other',
+  Food: 'food',
+  Housing: 'housing',
+  Entertainment: 'entertainment',
+  'Social Life': 'social',
   Income: 'income-cat',
 }
 
@@ -96,7 +106,17 @@ function formatCurrency(value, type) {
   return `${type === 'Income' ? '+' : '-'}$${formatted}`
 }
 
-function getInitialTransactions() {
+function inferCategory(description, fallbackCategory) {
+  const text = String(description || '').toLowerCase()
+  if (/(lunch|dinner|breakfast|coffee|grocer|restaurant|cafe|food)/.test(text)) return 'Food'
+  if (/(rent|mortgage|lease|apartment|housing|utilities)/.test(text)) return 'Housing'
+  if (/(uber|lyft|taxi|bus|train|gas|fuel|transport)/.test(text)) return 'Transportation'
+  if (/(movie|concert|game|entertain|streaming|spotify|netflix)/.test(text)) return 'Entertainment'
+  if (/(party|friends|social|bar|club|event)/.test(text)) return 'Social Life'
+  return fallbackCategory
+}
+
+export function getInitialTransactions() {
   const saved = localStorage.getItem('finsight_transactions')
   if (saved) {
     try {
@@ -111,17 +131,23 @@ function getInitialTransactions() {
   }))
 }
 
-export default function Transactions() {
+export default function Transactions({ onNavigate, transactions: propTransactions, setTransactions: propSetTransactions }) {
   const [mode, setMode] = useState('Month')
   const [anchor, setAnchor] = useState(new Date('2026-04-01'))
   const [search, setSearch] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('All Categories')
-  const [transactions, setTransactions] = useState(getInitialTransactions)
+  const [localTransactions, setLocalTransactions] = useState(getInitialTransactions)
+  const transactions = propTransactions && propTransactions.length ? propTransactions : localTransactions
+  const persistAndSet = (next) => {
+    try { localStorage.setItem('finsight_transactions', JSON.stringify(next)) } catch {}
+    if (propSetTransactions) propSetTransactions(next)
+    else setLocalTransactions(next)
+  }
   const [showForm, setShowForm] = useState(false)
   const [newTransaction, setNewTransaction] = useState({
     date: new Date().toISOString().slice(0, 10),
     description: '',
-    category: 'Other',
+    category: 'Food',
     type: 'Expense',
     amount: '',
   })
@@ -131,7 +157,7 @@ export default function Transactions() {
   const handleNewTransactionChange = (field, value) => {
     const next = { ...newTransaction, [field]: value }
     if (field === 'type') {
-      next.category = value === 'Income' ? 'Income' : 'Other'
+      next.category = value === 'Income' ? 'Income' : 'Food'
     }
     setNewTransaction(next)
   }
@@ -148,22 +174,21 @@ export default function Transactions() {
       id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
       date: newTransaction.date,
       description: newTransaction.description.trim(),
-      category: newTransaction.type === 'Income' ? 'Income' : newTransaction.category,
+      category: newTransaction.type === 'Income'
+        ? 'Income'
+        : inferCategory(newTransaction.description, newTransaction.category),
       type: newTransaction.type,
       amount: formatCurrency(amountNumber, newTransaction.type),
     }
 
-    setTransactions(prev => {
-      const updated = [transaction, ...prev]
-      localStorage.setItem('finsight_transactions', JSON.stringify(updated))
-      return updated
-    })
+    const updated = [transaction, ...transactions]
+    persistAndSet(updated)
 
     setAnchor(new Date(`${transaction.date}T00:00:00`))
     setNewTransaction({
       date: transaction.date,
       description: '',
-      category: 'Other',
+      category: 'Food',
       type: 'Expense',
       amount: '',
     })
@@ -234,8 +259,12 @@ export default function Transactions() {
             <div className="search-divider" />
             <select value={categoryFilter} onChange={e => setCategoryFilter(e.target.value)}>
               <option>All Categories</option>
-              <option>Transport</option>
+              <option>Transportation</option>
               <option>Bills</option>
+              <option>Food</option>
+              <option>Housing</option>
+              <option>Entertainment</option>
+              <option>Social Life</option>
               <option>Other</option>
               <option>Income</option>
             </select>
@@ -285,8 +314,12 @@ export default function Transactions() {
                 onChange={e => handleNewTransactionChange('category', e.target.value)}
                 disabled={newTransaction.type === 'Income'}
               >
-                <option>Transport</option>
+                <option>Food</option>
+                <option>Transportation</option>
                 <option>Bills</option>
+                <option>Housing</option>
+                <option>Entertainment</option>
+                <option>Social Life</option>
                 <option>Other</option>
                 <option>Income</option>
               </select>

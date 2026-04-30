@@ -258,7 +258,9 @@
 
 .analysis-page {
   min-height: 100vh;
-  padding: 36px 40px 60px;
+  width: 100%;
+  max-width: none;
+  padding: 0;
   background: radial-gradient(circle at 20% 10%, rgba(96, 165, 250, 0.16), transparent 220px),
     radial-gradient(circle at 85% 15%, rgba(34, 197, 94, 0.14), transparent 180px),
     linear-gradient(180deg, #111115 0%, #09090d 100%);

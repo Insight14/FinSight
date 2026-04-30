@@ -14,7 +14,7 @@ function Toast({ messages }) {
   );
 }
 
-export default function UserProfile({ onGuestMode }) {
+export default function UserProfile({ onBack }) {
   const [user, setUser] = useState(() => {
     const saved = localStorage.getItem('up_user_data');
     return saved ? JSON.parse(saved) : { name: 'First Last', email: 'first.last@gmail.com', phone: '' };
@@ -72,18 +72,11 @@ export default function UserProfile({ onGuestMode }) {
 
       <div className="up-container">
 
-        {/* Guest Mode Banner — only shown when onGuestMode prop is provided (i.e. top-level login screen) */}
-        {onGuestMode && (
-          <div className="up-guest-banner">
-            <div className="up-guest-banner-left">
-              <span className="up-guest-icon">◎</span>
-              <div>
-                <p className="up-guest-title">Just exploring?</p>
-                <p className="up-guest-sub">Jump straight into the dashboard without signing in.</p>
-              </div>
-            </div>
-            <button className="up-guest-btn" onClick={onGuestMode}>
-              Continue as Guest →
+        {/* Back to Dashboard Button */}
+        {onBack && (
+          <div className="up-back-banner">
+            <button className="up-back-btn" onClick={onBack}>
+              ← Back to Dashboard
             </button>
           </div>
         )}
